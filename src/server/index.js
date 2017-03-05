@@ -5,7 +5,7 @@ import { PORT } from 'common/constants';
 import bundler from 'server/bundler';
 
 // hot-reloading of express routes
-import initWatcher from 'server/watcher';
+import initWatcher from 'require-watch';
 
 const app = express();
 

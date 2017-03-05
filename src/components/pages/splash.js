@@ -8,7 +8,7 @@ export default class SplashPage extends Component {
 
 		return (
 			<div>
-				<h1>{title}</h1>
+				<h1>XXX {title}</h1>
 				<p>{message}</p>
 			</div>
 		);
