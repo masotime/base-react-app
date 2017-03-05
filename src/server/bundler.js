@@ -9,6 +9,7 @@ import { BUNDLE_PATHNAME, BUNDLE_SOURCE } from 'common/constants';
 
 let error;
 const fs = new MemoryFs();
+const assets = [];
 const compiler = webpack({
 	entry: { 
 		app: [
@@ -19,7 +20,8 @@ const compiler = webpack({
 	output: {
 		path: '/',
 		publicPath: '/',
-		filename: 'bundle.js'
+		filename: 'bundle.js',
+		chunkFilename: '[name].js'
 	},
 	module: {
 		rules: [
@@ -44,6 +46,11 @@ compiler.watch({}, (err, stats) => {
 	if (error) {
 		console.error(error);
 	} else {
+		stats.toJson().assets.forEach(({name, size}) => {
+			const sizeInMb = size / 1024 / 1024;
+			console.log(`🎁  ${name} (${sizeInMb.toFixed(2)}Mb)`);
+			assets.push(`/${name}`);
+		});		
 		console.log('✅  Bundle compiled');
 	}
 });
@@ -59,6 +66,15 @@ export default function() {
 
 		return res.send(fs.readFileSync('/bundle.js'));
 	});
+
+	router.get('*', ({ originalUrl }, res, next) => {
+		if (assets.some(asset => asset === originalUrl)) {
+			return res.send(fs.readFileSync(originalUrl));
+		}
+
+		return next();
+	});
+	
 
 	return router;
 }
